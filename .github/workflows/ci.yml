@@ -1,0 +1,16 @@
+name: Bash Script CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Bash Syntax
+        run: bash -n system_check.sh
