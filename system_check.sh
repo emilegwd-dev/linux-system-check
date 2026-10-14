@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
+if [[ $# -gt 1 ]]; then
+    echo "Usage: bash system_check.sh [disk_usage]"
+    exit 2
+fi
+
 if [[ -n "${1:-}" ]]; then
-    usage="$1"
+    if ! [[ "$1" =~ ^[0-9]+$ ]] || (( 10#$1 > 100 )); then
+        echo "Error: disk usage must be a number between 0 and 100"
+        exit 2
+    fi
+    usage=$((10#$1))
 else
     usage=$(df -P / | awk 'NR==2 {gsub("%", "", $5); print $5}')
 fi
