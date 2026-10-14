@@ -14,3 +14,11 @@ jobs:
 
       - name: Check Bash Syntax
         run: bash -n system_check.sh
+
+      - name: Check Git Ignore
+        run: |
+          git check-ignore report.txt
+          if git ls-files --error-unmatch report.txt 2>/dev/null; then
+            echo "ERROR: report.txt must not be tracked"
+            exit 1
+          fi
