@@ -22,5 +22,39 @@ jobs:
             echo "ERROR: report.txt must not be tracked"
             exit 1
           fi
-      -  name: Run System Check Tests
-         run: bash tests/test_system_check.sh
+
+      - name: Run System Check Tests
+        run: bash tests/test_system_check.sh
+
+      - name: Build Docker Image
+        run: docker build -t system-check:1.0 .
+
+      - name: Test Docker - Normal Usage
+        run: |
+          docker run --rm system-check:1.0 79
+
+      - name: Test Docker - Disk Alert
+        run: |
+          if docker run --rm system-check:1.0 80; then
+            echo "ERROR: Expected exit code 1"
+            exit 1
+          else
+            code=$?
+            if [ "$code" -ne 1 ]; then
+              echo "ERROR: Expected exit code 1, got $code"
+              exit 1
+            fi
+          fi
+
+      - name: Test Docker - Invalid Input
+        run: |
+          if docker run --rm system-check:1.0 abc; then
+            echo "ERROR: Expected exit code 2"
+            exit 1
+          else
+            code=$?
+            if [ "$code" -ne 2 ]; then
+              echo "ERROR: Expected exit code 2, got $code"
+              exit 1
+            fi
+          fi
